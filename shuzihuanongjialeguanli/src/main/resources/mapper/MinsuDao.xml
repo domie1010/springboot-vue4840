@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.MinsuDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.minsu_uuid_number as minsuUuidNumber
+        ,a.minsu_name as minsuName
+        ,a.minsu_photo as minsuPhoto
+        ,a.minsu_types as minsuTypes
+        ,a.minsu_new_money as minsuNewMoney
+        ,a.minsu_clicknum as minsuClicknum
+        ,a.minsu_content as minsuContent
+        ,a.shangxia_types as shangxiaTypes
+        ,a.minsu_delete as minsuDelete
+        ,a.insert_time as insertTime
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.MinsuView" >
+        SELECT
+        <include refid="Base_Column_List" />
+        <!-- 级联表的字段 -->
+
+        FROM minsu  a
+
+        <where>
+            <if test="params.ids != null">
+                and a.id in
+                <foreach item="item" index="index" collection="params.ids" open="(" separator="," close=")">
+                #{item}
+                </foreach>
+            </if>
+            <if test=" params.minsuUuidNumber != '' and params.minsuUuidNumber != null and params.minsuUuidNumber != 'null' ">
+                and a.minsu_uuid_number like CONCAT('%',#{params.minsuUuidNumber},'%')
+            </if>
+            <if test=" params.minsuName != '' and params.minsuName != null and params.minsuName != 'null' ">
+                and a.minsu_name like CONCAT('%',#{params.minsuName},'%')
+            </if>
+            <if test="params.minsuTypes != null and params.minsuTypes != ''">
+                and a.minsu_types = #{params.minsuTypes}
+            </if>
+            <if test="params.minsuNewMoneyStart != null ">
+                <![CDATA[  and a.minsu_new_money >= #{params.minsuNewMoneyStart}   ]]>
+            </if>
+            <if test="params.minsuNewMoneyEnd != null ">
+                <![CDATA[  and a.minsu_new_money <= #{params.minsuNewMoneyEnd}   ]]>
+            </if>
+            <if test="params.minsuClicknumStart != null and params.minsuClicknumStart != ''">
+                <![CDATA[  and a.minsu_clicknum >= #{params.minsuClicknumStart}   ]]>
+            </if>
+            <if test="params.minsuClicknumEnd != null and params.minsuClicknumEnd != ''">
+                <![CDATA[  and a.minsu_clicknum <= #{params.minsuClicknumEnd}   ]]>
+            </if>
+             <if test="params.minsuClicknum != null and params.minsuClicknum != ''">
+                and a.minsu_clicknum = #{params.minsuClicknum}
+             </if>
+            <if test=" params.minsuContent != '' and params.minsuContent != null and params.minsuContent != 'null' ">
+                and a.minsu_content like CONCAT('%',#{params.minsuContent},'%')
+            </if>
+            <if test="params.shangxiaTypes != null and params.shangxiaTypes != ''">
+                and a.shangxia_types = #{params.shangxiaTypes}
+            </if>
+            <if test="params.minsuDeleteStart != null and params.minsuDeleteStart != ''">
+                <![CDATA[  and a.minsu_delete >= #{params.minsuDeleteStart}   ]]>
+            </if>
+            <if test="params.minsuDeleteEnd != null and params.minsuDeleteEnd != ''">
+                <![CDATA[  and a.minsu_delete <= #{params.minsuDeleteEnd}   ]]>
+            </if>
+             <if test="params.minsuDelete != null and params.minsuDelete != ''">
+                and a.minsu_delete = #{params.minsuDelete}
+             </if>
+            <if test=" params.insertTimeStart != '' and params.insertTimeStart != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) >= UNIX_TIMESTAMP(#{params.insertTimeStart}) ]]>
+            </if>
+            <if test=" params.insertTimeEnd != '' and params.insertTimeEnd != null ">
+                <![CDATA[  and UNIX_TIMESTAMP(a.insert_time) <= UNIX_TIMESTAMP(#{params.insertTimeEnd}) ]]>
+            </if>
+
+        </where>
+        order by a.${params.sort} ${params.order}
+    </select>
+
+</mapper>
